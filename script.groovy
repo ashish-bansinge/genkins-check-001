@@ -7,7 +7,7 @@ def testApp() {
 } 
 
 def deployApp() {
-    echo 'deplying the application...'
+    echo 'deplying the application... On Local'
     echo "deploying version ${params.VERSION}"
 } 
 
