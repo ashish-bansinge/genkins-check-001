@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    environment {
+        NEW_VERSION = '1.4.0'
+        SERVER_CREDENTIALS = credentials('credentials-ID-defined-in-jenkin-credentials')
+    }
+
+    parameters {
+        #string(name: 'Version_STR', defaultValue: '', description: 'Which version do you want to deploy?')
+        choice(name: 'VERSION_CHOICE', choices: ['1.0.1','2.2.9','3.2.1','4.5.2'], description: 'to get version')
+        booleanParam(name: 'executeTests', defaultValue: true, description: 'to get confirmation')
+    }
+    
+    stages {
+
+        stage("build") {
+            steps {
+                echo "building version ${NEW_VERSION}"
+                echo 'this is syntax of groovy so it has to include in double quotes while using version number'
+
+            }
+        }
+        stage("test") {
+            when {
+                expression {
+                    params.executeTests
+                }
+            }
+            steps {
+                script {
+                    gv.testApp()
+                }
+            }
+        }
+        stage("deploy") {
+            steps {
+                echo "Deploying code..."
+
+                echo "deploying version ${param.VERSION_CHOICE}"
+
+                echo "deploying with ${SERVER_CREDENTIALS}"
+                
+                echo "above code is for getting credetials for all stages within jenkins file"
+
+                echo "below code is specific to single stage only"
+
+                withCredentials([
+                    usernamePassword( credentials: 'credentials_ID', usernameVariable: user , passwordVariable: password )                
+                ]) {
+                    sh "some scripts ${user} ${password}"
+                }
+
+
+            }
+        }
+    }   
+}
